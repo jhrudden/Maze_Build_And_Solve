@@ -31,7 +31,6 @@ class Node:
             else:
                 self.edges[1] = edge;
 
-        self.edges[index] = edge;
 
     # Output a string representing a Cell with walls representing Null
     # entries in an edge array.
@@ -46,4 +45,18 @@ class Node:
             string += "_";
         else:
             string += " ";
+        return string
+
+
+    def print_edges(self):
+        string = [self.pos]
+        if not self.edges[0] is None:
+            string.append("up")
+        if not self.edges[1] is None:
+            string.append("down")
+        if not self.edges[2] is None:
+            string.append("left")
+        if not self.edges[3] is None:
+            string.append("right")
+
         return string

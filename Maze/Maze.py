@@ -1,7 +1,7 @@
 import random as rand
 from Edge import Edge
 from Node import Node
-from datastructures.priorityq import PriorityQ
+from DataStructures.PriorityQ import PriorityQ
 
 class Maze:
     def __init__(self, num_rows, num_cols):
@@ -14,7 +14,6 @@ class Maze:
         # Construct the grid of Nodes, which will later be turned into a Maze
     def init_grid(self):
         grid = [];
-        area = self.num_cols * self.num_rows
 
         # contruct a rows and cols of a blank grid
         for row in range(self.num_rows):
@@ -23,24 +22,7 @@ class Maze:
                 curr_node = Node((row,col));
                 curr_row.append(curr_node)
 
-                # Once a node has been constructed connect it and the Node above
-                # to eachother if possible
-                # also give edges weights for future use
-                # is there an up neighbor?
-                if row > 0:
-                    up_neighbor = grid[row-1][col]
-                    edge_1 = Edge(curr_node, up_neighbor, rand.randrange(area))
-                    curr_node.connect(edge_1,0)
-                    edge_2 = Edge(up_neighbor, curr_node, rand.randrange(area))
-                    up_neighbor.connect(edge_2,1)
-                # is there a left neighbor?
 
-                if col > 0:
-                    left_neighbor = curr_row[col-1]
-                    edge_1 = Edge(curr_node, left_neighbor, rand.randrange(area))
-                    curr_node.connect(edge_1,2);
-                    edge_2 = Edge(left_neighbor, curr_node, rand.randrange(area))
-                    left_neighbor.connect(edge_2,3)
             # once every col of a row has been constructed the row is complete
             grid.append(curr_row);
 
@@ -57,13 +39,15 @@ class Maze:
             # grab the current priority edge from the queue
             min = priority.remove_min();
 
-            if not min.isloop(graph_subsets):
+            if not min.is_loop(graph_subsets):
 
-
+                min.add_to_subset(graph_subsets);
+                min.connect();
 
     # initialize a priority queue with mock edges for every possible connection
     # in this grid between nodes, all with random wieghts
     def init_edge_list(self):
+        area = self.num_cols*self.num_rows
         priority = PriorityQ();
 
         for row in range(self.num_rows):
@@ -73,16 +57,20 @@ class Maze:
                 # if possible create a mock edge between current node add
                 # node above
                 if row > 0:
-                    up_neighbor = grid[row-1][col]
+                    up_neighbor = self.grid[row-1][col]
                     edge_1 = Edge(curr_node, up_neighbor, rand.randrange(area))
+                    edge_2 = Edge(up_neighbor, curr_node, rand.randrange(area))
                     priority.insert(edge_1)
+                    priority.insert(edge_2)
 
                 # if possible create a mock edge between current node add
                 # node to the right
                 if col > 0:
-                    left_neighbor = curr_row[col-1]
-                    edge_2 = Edge(curr_node,left_neighbor,rand.randrange(area))
+                    left_neighbor = self.grid[row][col-1]
+                    edge_1 = Edge(curr_node,left_neighbor,rand.randrange(area))
+                    edge_2 = Edge(left_neighbor,curr_node, rand.randrange(area))
                     priority.insert(edge_1)
+                    priority.insert(edge_2)
 
         return priority;
 
@@ -101,5 +89,7 @@ class Maze:
             curr_row_string += "|"
             print(curr_row_string)
 
-grid = Maze(10,10)
+grid = Maze(100,100)
+grid.kruskel()
+
 grid.draw_grid()
