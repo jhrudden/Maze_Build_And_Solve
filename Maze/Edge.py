@@ -5,3 +5,6 @@ class Edge:
         self.to_node = to_node;
         self.from_node = from_node;
         self.weight = weight;
+
+    def compare(self, other_edge):
+        return self.weight - other_edge.weight;

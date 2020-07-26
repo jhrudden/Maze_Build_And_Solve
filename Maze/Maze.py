@@ -47,12 +47,11 @@ class Maze:
         # to their respective neighbors
         self.grid = grid
 
+    def kruskel(self):
 
 
 
-    def connect_grid(self):
-        return
-
+    # return a string representing the currently constructed Maze
     def draw_grid(self):
         print(" _" * self.num_cols);
         for row in range(self.num_rows):
