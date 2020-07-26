@@ -10,8 +10,26 @@ class Node:
 
 
     # Set a connection between this node and a neighbor represented by a
-    # given edge to its respective direction represented by the given index.
-    def connect(self,edge, index):
+    # given edge to its respective direction represented by the given node's pos
+    def connect(self,edge, to_node):
+
+        # is this node on the same level as the other given node
+        if self.pos[0] == to_node.pos[0]:
+            # is the to_node to the left of this node
+            if self.pos[1] > to_node.pos[1]:
+                self.edges[2] = edge;
+
+            # the to_node must be to the right
+            else:
+                self.edges[3] = edge;
+        else:
+            # is the to_node above  this node
+            if self.pos[0] > to_node.pos[0]:
+                self.edges[0] = edge;
+
+            # must be below
+            else:
+                self.edges[1] = edge;
 
         self.edges[index] = edge;
 

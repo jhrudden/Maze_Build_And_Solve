@@ -1,6 +1,7 @@
 import random as rand
 from Edge import Edge
 from Node import Node
+from datastructures.priorityq import PriorityQ
 
 class Maze:
     def __init__(self, num_rows, num_cols):
@@ -48,7 +49,42 @@ class Maze:
         self.grid = grid
 
     def kruskel(self):
+        priority = self.init_edge_list()
+        graph_subsets = dict()
 
+        # continue to extract edges from the priority queue untill it is empty
+        while not priority.is_empty():
+            # grab the current priority edge from the queue
+            min = priority.remove_min();
+
+            if not min.isloop(graph_subsets):
+
+
+
+    # initialize a priority queue with mock edges for every possible connection
+    # in this grid between nodes, all with random wieghts
+    def init_edge_list(self):
+        priority = PriorityQ();
+
+        for row in range(self.num_rows):
+            for col in range(self.num_cols):
+                curr_node = self.grid[row][col]
+
+                # if possible create a mock edge between current node add
+                # node above
+                if row > 0:
+                    up_neighbor = grid[row-1][col]
+                    edge_1 = Edge(curr_node, up_neighbor, rand.randrange(area))
+                    priority.insert(edge_1)
+
+                # if possible create a mock edge between current node add
+                # node to the right
+                if col > 0:
+                    left_neighbor = curr_row[col-1]
+                    edge_2 = Edge(curr_node,left_neighbor,rand.randrange(area))
+                    priority.insert(edge_1)
+
+        return priority;
 
 
     # return a string representing the currently constructed Maze
