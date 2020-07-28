@@ -30,6 +30,8 @@ class Maze:
         # to their respective neighbors
         self.grid = grid
 
+    # Creates a minimum spanning tree by finding edges with least weight that
+    # connects trees in a forest (grid in this case)
     def kruskel(self):
         priority = self.init_edge_list()
         graph_subsets = dict()
@@ -75,51 +77,78 @@ class Maze:
         return priority;
 
 
-    # # TODO: if neighbors already are in dictionary don't add them to work list
-    # or to dict again
+    # # TODO: make selection based off a priorityQ instead of random selection
+    # Starting from a random node in a grid add a random neighbor to a maze
+    # recursively until all vertices are in the Maze
     def prims(self):
         vertices = [];
         total_vertices = self.num_cols * self.num_rows;
 
         # setup
-        node_index = random.randrange(total_vertices);
-        row_index = (node_index // self.num_cols) - 1
+        node_index = rand.randrange(total_vertices);
+        row_index = ((node_index - 1) // self.num_cols)
         col_index = (node_index - ((row_index) * self.num_cols)) - 1
+        print(row_index, col_index)
 
+        # grad the intial node
         first_node = self.grid[row_index][col_index]
 
+        # add it to the nodes to choose to visit at random
         work_list = [first_node]
 
+        # used to determine which node was originally next to any given node,
+        # when it is visited
         connected_to = dict()
 
+        # Run untill all vertices have been added to Maze
         while len(vertices) < total_vertices:
-            current_node = work_list.pop(random.randrange(len(work_list)))
+
+            # grab a node at random from seen neighbors list
+            current_node = work_list.pop(rand.randrange(len(work_list)))
             vertices.append(current_node)
             [curr_row, curr_col] = current_node.pos;
 
 
+            # find all the neighbors for this node / nodes directly touching
+            # this node, and if they haven't already been seen add them to
+            # future nodes to be visited
+
             if curr_col >= 0 and curr_col < self.num_cols - 1:
                 right_neighbor = self.grid[curr_row][curr_col+1]
-                work_list.append(right_neighbor);
-                connected_to.update({right_neighbor : current_node})
+                if connected_to.get(right_neighbor) is None:
+                    work_list.append(right_neighbor);
+                    connected_to.update({right_neighbor : current_node})
 
             if curr_col > 0 and curr_col < self.num_cols:
                 left_neighbor = self.grid[curr_row][curr_col-1]
-                work_list.append(left_neighbor);
-                connected_to.update({left_neighbor : current_node})
+                if connected_to.get(left_neighbor) is None:
+                    work_list.append(left_neighbor);
+                    connected_to.update({left_neighbor : current_node})
 
-            if cur_row >= 0 and curr_row < self.num_rows - 1:
+            if curr_row >= 0 and curr_row < self.num_rows - 1:
                 down_neigbor = self.grid[curr_row+1][curr_col]
-                work_list.append(down_neigbor);
-                connected_to.update({down_neigbor : current_node})
+                if connected_to.get(down_neigbor) is None:
+                    work_list.append(down_neigbor);
+                    connected_to.update({down_neigbor : current_node})
 
-            if cur_row > 0 and curr_row < self.num_rows:
+            if curr_row > 0 and curr_row < self.num_rows:
                 up_neigbor = self.grid[curr_row-1][curr_col]
-                work_list.append(up_neigbor);
-                connected_to.update({up_neigbor : current_node})
+                if connected_to.get(up_neigbor) is None:
+                    work_list.append(up_neigbor);
+                    connected_to.update({up_neigbor : current_node})
 
+
+            # find the node that was first used to discover this node
             connection = connected_to.get(current_node);
 
+
+
+
+            # connect the current node and the original node that discovered
+            # this node as a neighbor in the grid if possible
+
+            # used as a base case as the first node will not have any past
+            # discoverer
             if connection is not None:
                 curr_edge = Edge(current_node, connection, 0);
                 curr_edge.connect();
@@ -143,7 +172,12 @@ class Maze:
             curr_row_string += "|"
             print(curr_row_string)
 
-grid = Maze(10,10)
-grid.kruskel()
+grid1 = Maze(10,10)
+grid1.prims()
+grid2 = Maze(10,10)
+grid2.kruskel()
 
-grid.draw_grid()
+print("Prims")
+grid1.draw_grid()
+print("kruskel")
+grid2.draw_grid()
