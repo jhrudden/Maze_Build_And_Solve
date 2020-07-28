@@ -75,6 +75,60 @@ class Maze:
         return priority;
 
 
+    # # TODO: if neighbors already are in dictionary don't add them to work list
+    # or to dict again
+    def prims(self):
+        vertices = [];
+        total_vertices = self.num_cols * self.num_rows;
+
+        # setup
+        node_index = random.randrange(total_vertices);
+        row_index = (node_index // self.num_cols) - 1
+        col_index = (node_index - ((row_index) * self.num_cols)) - 1
+
+        first_node = self.grid[row_index][col_index]
+
+        work_list = [first_node]
+
+        connected_to = dict()
+
+        while len(vertices) < total_vertices:
+            current_node = work_list.pop(random.randrange(len(work_list)))
+            vertices.append(current_node)
+            [curr_row, curr_col] = current_node.pos;
+
+
+            if curr_col >= 0 and curr_col < self.num_cols - 1:
+                right_neighbor = self.grid[curr_row][curr_col+1]
+                work_list.append(right_neighbor);
+                connected_to.update({right_neighbor : current_node})
+
+            if curr_col > 0 and curr_col < self.num_cols:
+                left_neighbor = self.grid[curr_row][curr_col-1]
+                work_list.append(left_neighbor);
+                connected_to.update({left_neighbor : current_node})
+
+            if cur_row >= 0 and curr_row < self.num_rows - 1:
+                down_neigbor = self.grid[curr_row+1][curr_col]
+                work_list.append(down_neigbor);
+                connected_to.update({down_neigbor : current_node})
+
+            if cur_row > 0 and curr_row < self.num_rows:
+                up_neigbor = self.grid[curr_row-1][curr_col]
+                work_list.append(up_neigbor);
+                connected_to.update({up_neigbor : current_node})
+
+            connection = connected_to.get(current_node);
+
+            if connection is not None:
+                curr_edge = Edge(current_node, connection, 0);
+                curr_edge.connect();
+
+
+
+
+
+
     # return a string representing the currently constructed Maze
     def draw_grid(self):
         print(" _" * self.num_cols);
@@ -89,7 +143,7 @@ class Maze:
             curr_row_string += "|"
             print(curr_row_string)
 
-grid = Maze(100,100)
+grid = Maze(10,10)
 grid.kruskel()
 
 grid.draw_grid()
