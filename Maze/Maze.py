@@ -2,6 +2,8 @@ import random as rand
 from Edge import Edge
 from Node import Node
 from DataStructures.PriorityQ import PriorityQ
+from DataStructures.Stack import Stack
+from DataStructures.Queue import Queue
 
 class Maze:
     def __init__(self, num_rows, num_cols):
@@ -131,12 +133,17 @@ class Maze:
                 curr_edge = Edge(current_node, connection, 0);
                 curr_edge.connect();
 
+    def bfs(self, start_node, end_node):
+        return self.find_path(start_node, end_node, Queue())
+
 
     def dfs(self, start_node, end_node):
+        return self.find_path(start_node, end_node, Stack())
+
+
+    def find_path(self, start_node, end_node, worklist):
         all_paths = dict();
         path_to_sol = []
-        worklist = []
-
         # setup
         curr_node = start_node;
         all_paths.update({curr_node:curr_node})
@@ -147,8 +154,8 @@ class Maze:
             for neighbor in neighbors:
                 if all_paths.get(neighbor) is None:
                     all_paths.update({neighbor : curr_node});
-                    worklist.insert(0,neighbor);
-            curr_node = worklist.pop(0);
+                    worklist.add(neighbor);
+            curr_node = worklist.remove();
 
         # getting path from end to start by pos (start to end)
         while curr_node != start_node:
