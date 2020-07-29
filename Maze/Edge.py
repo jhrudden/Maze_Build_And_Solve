@@ -56,3 +56,8 @@ class Edge:
                 from_subset = dictionary.get(from_subset)
             dictionary.pop(to_subset)
             dictionary.update({to_subset: from_subset})
+
+
+    # gross getter
+    def find_incident(self):
+        return self.to_node;

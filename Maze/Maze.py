@@ -77,84 +77,86 @@ class Maze:
         return priority;
 
 
-    # # TODO: make selection based off a priorityQ instead of random selection
     # Starting from a random node in a grid add a random neighbor to a maze
     # recursively until all vertices are in the Maze
     def prims(self):
         vertices = [];
         total_vertices = self.num_cols * self.num_rows;
-
         # setup
         node_index = rand.randrange(total_vertices);
         row_index = ((node_index - 1) // self.num_cols)
         col_index = (node_index - ((row_index) * self.num_cols)) - 1
         print(row_index, col_index)
-
         # grad the intial node
         first_node = self.grid[row_index][col_index]
-
         # add it to the nodes to choose to visit at random
         work_list = [first_node]
-
         # used to determine which node was originally next to any given node,
         # when it is visited
         connected_to = dict()
-
         # Run untill all vertices have been added to Maze
         while len(vertices) < total_vertices:
-
             # grab a node at random from seen neighbors list
             current_node = work_list.pop(rand.randrange(len(work_list)))
             vertices.append(current_node)
             [curr_row, curr_col] = current_node.pos;
-
-
             # find all the neighbors for this node / nodes directly touching
             # this node, and if they haven't already been seen add them to
             # future nodes to be visited
-
             if curr_col >= 0 and curr_col < self.num_cols - 1:
                 right_neighbor = self.grid[curr_row][curr_col+1]
                 if connected_to.get(right_neighbor) is None:
                     work_list.append(right_neighbor);
                     connected_to.update({right_neighbor : current_node})
-
             if curr_col > 0 and curr_col < self.num_cols:
                 left_neighbor = self.grid[curr_row][curr_col-1]
                 if connected_to.get(left_neighbor) is None:
                     work_list.append(left_neighbor);
                     connected_to.update({left_neighbor : current_node})
-
             if curr_row >= 0 and curr_row < self.num_rows - 1:
                 down_neigbor = self.grid[curr_row+1][curr_col]
                 if connected_to.get(down_neigbor) is None:
                     work_list.append(down_neigbor);
                     connected_to.update({down_neigbor : current_node})
-
             if curr_row > 0 and curr_row < self.num_rows:
                 up_neigbor = self.grid[curr_row-1][curr_col]
                 if connected_to.get(up_neigbor) is None:
                     work_list.append(up_neigbor);
                     connected_to.update({up_neigbor : current_node})
-
-
             # find the node that was first used to discover this node
             connection = connected_to.get(current_node);
-
-
-
-
             # connect the current node and the original node that discovered
             # this node as a neighbor in the grid if possible
-
-            # used as a base case as the first node will not have any past
-            # discoverer
             if connection is not None:
                 curr_edge = Edge(current_node, connection, 0);
                 curr_edge.connect();
 
 
+    def dfs(self, start_node, end_node):
+        all_paths = dict();
+        path_to_sol = []
+        worklist = []
 
+        # setup
+        curr_node = start_node;
+        all_paths.update({curr_node:curr_node})
+
+        # When the search block lands on the wanted tile, end the search
+        while curr_node != end_node:
+            neighbors = curr_node.get_neighbors();
+            for neighbor in neighbors:
+                if all_paths.get(neighbor) is None:
+                    all_paths.update({neighbor : curr_node});
+                    worklist.insert(0,neighbor);
+            curr_node = worklist.pop(0);
+
+        # getting path from end to start by pos (start to end)
+        while curr_node != start_node:
+            path_to_sol.insert(0,curr_node.pos);
+            curr_node = all_paths.get(curr_node);
+        path_to_sol.insert(0,start_node.pos)
+        # return the found path
+        return path_to_sol
 
 
 
@@ -172,12 +174,7 @@ class Maze:
             curr_row_string += "|"
             print(curr_row_string)
 
-grid1 = Maze(10,10)
-grid1.prims()
-grid2 = Maze(10,10)
-grid2.kruskel()
-
-print("Prims")
-grid1.draw_grid()
-print("kruskel")
-grid2.draw_grid()
+Maze = Maze(10,10)
+Maze.kruskel()
+Maze.draw_grid()
+print(Maze.dfs(Maze.grid[0][0],Maze.grid[9][9]))

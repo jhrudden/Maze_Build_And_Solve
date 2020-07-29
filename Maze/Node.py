@@ -60,3 +60,11 @@ class Node:
             string.append("right")
 
         return string
+
+    # gross getter
+    def get_neighbors(self):
+        neighbors = []
+        for edge in self.edges:
+            if edge is not None:
+                neighbors.append(edge.find_incident())
+        return neighbors;
