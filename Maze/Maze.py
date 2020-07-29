@@ -133,10 +133,13 @@ class Maze:
                 curr_edge = Edge(current_node, connection, 0);
                 curr_edge.connect();
 
+    # Search for a given node in a depth by depth fashion, only extending, the
+    # search to each node neighbor when a wave has been completely searched
     def bfs(self, start_node, end_node):
         return self.find_path(start_node, end_node, Queue())
 
-
+    # Search for a given node by following a whole branch, then backtracking
+    # when a dead end is found
     def dfs(self, start_node, end_node):
         return self.find_path(start_node, end_node, Stack())
 
